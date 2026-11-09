@@ -1,0 +1,18 @@
+# Dipendenze della pipeline scientifica di Tesi
+# Python >= 3.10 consigliato
+
+numpy>=1.24.0
+pandas>=2.0.0
+opencv-python>=4.8.0
+matplotlib>=3.7.0
+networkx>=3.0
+pm4py>=2.7.0
+
+# Dipendenze per inferenza con Vision-Language Model (Qwen2.5-VL)
+torch>=2.1.0
+transformers>=4.45.0
+accelerate>=0.26.0
+qwen-vl-utils>=0.0.8
+
+# Quantizzazione opzionale su GPU (CUDA)
+bitsandbytes>=0.46.1

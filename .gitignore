@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches
+.pytest_cache/
+.ipynb_checkpoints/
+.matplotlib/
+
+# Ambienti virtuali
+venv/
+.venv/
+env/
+ENV/
+
+# File multimediali pesanti (video grezzi > 100MB da non tracciare su Git)
+*.mp4
+*.avi
+*.mkv
+*.tar.gz
+
+# File di sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini

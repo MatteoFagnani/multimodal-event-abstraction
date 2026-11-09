@@ -1,0 +1,84 @@
+{
+    "total_events": 6451,
+    "ball_action_events": 767,
+    "player_kinematic_events": 5684,
+    "unique_clips": 767,
+    "ball_activity_distribution": {
+        "Ball_Control_and_Carry": 239,
+        "Stationary_Play": 158,
+        "Forward_Pass": 152,
+        "Backward_Pass": 131,
+        "Clearance_or_Long_Back_Pass": 39,
+        "Long_Forward_Pass": 39,
+        "Lateral_Pass": 8,
+        "Kickoff_and_Pass": 1
+    },
+    "player_performance": {
+        "Player_1": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 205,
+            "passes_initiated": 0
+        },
+        "Player_10": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 0,
+            "passes_initiated": 0
+        },
+        "Player_11": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 345,
+            "passes_initiated": 0
+        },
+        "Player_12": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 262,
+            "passes_initiated": 0
+        },
+        "Player_14": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 241,
+            "passes_initiated": 0
+        },
+        "Player_2": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 313,
+            "passes_initiated": 0
+        },
+        "Player_4": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 241,
+            "passes_initiated": 0
+        },
+        "Player_5": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 111,
+            "passes_initiated": 0
+        },
+        "Player_6": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 209,
+            "passes_initiated": 0
+        },
+        "Player_8": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 313,
+            "passes_initiated": 0
+        },
+        "Player_9": {
+            "total_displacement_km": 0.0,
+            "max_speed_kmh": 0.0,
+            "sprint_count": 0,
+            "passes_initiated": 0
+        }
+    }
+}
