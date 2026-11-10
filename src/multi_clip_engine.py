@@ -1,6 +1,7 @@
 """
 Modulo per l'esecuzione della pipeline sequenziale multi-clip (0000 - 0005)
 per la ricostruzione della fase iniziale di possesso palla (18 secondi).
+Include sia i campi standard IEEE XES sia gli alias tabellari tradizionali.
 """
 
 import os
@@ -53,6 +54,15 @@ def run_multi_clip_pipeline(data_dir: str) -> pd.DataFrame:
         
         # Genera evento per l'azione della palla (traccia 'Ball_Possession_Phase')
         events.append({
+            'Case_ID': 'Match_2013-11-28_1stHalf',
+            'Clip_ID': c_id,
+            'Timestamp': meta['ts_start'],
+            'Activity': res['validated_activity'],
+            'Resource': f"Player_{res['actor_id']}",
+            'Object_Involved': 'Ball',
+            'Kinematic_Validation': f"Ball_Move={res['ball_displacement_px']:.0f}px",
+            'Validation_Status': 'VALIDATED',
+            # Colonne standard XES
             'case:concept:name': 'Possession_Phase_1',
             'concept:name': res['validated_activity'],
             'time:timestamp': meta['ts_start'],
@@ -82,6 +92,15 @@ def run_multi_clip_pipeline(data_dir: str) -> pd.DataFrame:
                 act = "Standing_Marking"
                 
             events.append({
+                'Case_ID': 'Match_2013-11-28_1stHalf',
+                'Clip_ID': c_id,
+                'Timestamp': meta['ts_start'],
+                'Activity': act,
+                'Resource': f"Player_{pid}",
+                'Object_Involved': 'None',
+                'Kinematic_Validation': f"Speed={max_spd:.1f}km/h, Disp={disp_m:.1f}m",
+                'Validation_Status': 'VALIDATED',
+                # Colonne standard XES
                 'case:concept:name': f"Player_{pid}_Trace",
                 'concept:name': act,
                 'time:timestamp': meta['ts_start'],
