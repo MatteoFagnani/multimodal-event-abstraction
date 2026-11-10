@@ -125,6 +125,7 @@ python run_experiments.py --stage all
 python run_experiments.py --stage 1    # Validazione Clip 0000 (Test A vs Test B)
 python run_experiments.py --stage 2    # Estrazione Multi-Clip (0000-0005, 18 secondi di gioco)
 python run_experiments.py --stage 3    # Process Mining su scala globale (6.451 eventi)
+python run_experiments.py --stage 4    # Benchmark e Comparazione Zero-Shot vs Domain Rules (767 clip)
 ```
 
 ### Esecuzione via Jupyter Notebook / Google Colab
@@ -157,6 +158,30 @@ La telemetria a 20Hz documenta contestualmente lo scatto ad alta intensita' del 
   - *Backward_Pass:* 131 occorrenze (17.1%)
   - *Long_Forward_Pass / Clearance:* 78 occorrenze (10.2%)
   - *Lateral_Pass / Kickoff:* 9 occorrenze (1.1%)
+
+### Stadio 4: Benchmark e Dataset di Comparazione (Zero-Shot vs Domain Rules)
+Il confronto comparativo tra l'approccio puramente visivo (Zero-Shot VLM) e l'approccio neuro-simbolico integrato con regole di dominio evidenzia il contributo critico della Domain Knowledge:
+
+1. **Benchmark su Campione Stratificato (25 Eventi Critici):**
+   - **Tasso di Concordanza (Agreement Rate):** $40.0\%$ (10 clip su 25).
+   - **Tasso di Discrepanza Risolto:** $60.0\%$ (15 clip su 25).
+   - Il modello puramente visivo incorre sistematicamente in inversioni prospettiche (5/5 retropassaggi scambiati per passaggi in avanti per via dell'orientamento corporeo dei compagni), allucinazioni dinamiche su gioco stazionario (5/5 casi in cui la corsa del giocatore inganna il VLM facendo credere che la palla sia in movimento), ambiguita' controllo/passaggio (2/5) ed errori su rinvii difensivi (2/2).
+
+2. **Valutazione Globale sull'Intero Match (767 Clip):**
+   - **Tasso di Concordanza Globale:** $63.75\%$ (489 clip concordanti).
+   - **Anomalie e Discrepanze Corrette:** $36.25\%$ (278 clip corrette dalle regole).
+   - **Tassonomia degli Errori Corretti:**
+     - *Allucinazione di Movimento su Palla Ferma (`STATIONARY_HALLUCINATION`):* 109 clip ($14.21\%$).
+     - *Inversione Direzionale Prospettica (`DIRECTIONAL_INVERSION`):* 68 clip ($8.87\%$).
+     - *Ambiguita' Controllo/Passaggio (`CONTROL_PASS_AMBIGUITY`):* 44 clip ($5.74\%$).
+     - *Ambiguita' Passaggio/Controllo (`PASS_CONTROL_AMBIGUITY`):* 29 clip ($3.78\%$).
+     - *Inversione Tattica Rinvio/Lancio (`TACTICAL_INVERSION`):* 19 clip ($2.48\%$).
+     - *Ambiguita' Laterale (`LATERAL_AMBIGUITY`):* 8 clip ($1.04\%$).
+     - *Omissione Regolamentare (`REGULATORY_OMISSION`):* 1 clip ($0.13\%$).
+   - **Impatto Diretto sulla Qualita' del Process Mining:**
+     - Eliminazione di 109 cicli fittizi (*false loops*) su palla morta.
+     - Rettifica di 87 transizioni invertite di flusso nel grafo di processo (*DFG*).
+     - Raffinamento della granularita' dell'astrazione per 81 eventi.
 
 ---
 
