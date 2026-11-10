@@ -1,0 +1,62 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{cllllcc}
+\hline
+\textbf{Clip} & \textbf{Categoria Tattica} & \textbf{Attore} & \textbf{Zero-Shot (No KB)} & \textbf{Neuro-Simbolico (Con KB)} & \textbf{Accordo} & \textbf{Discrepanza} \\
+\hline
+0000 & Kickoff & Player_5 & Forward\_Pass & Kickoff\_and\_Pass & \textcolor{red}{MISMATCH} & REGULATORY\_OMISSION \\
+0005 & Backward\_Pass & Player_14 & Forward\_Pass & Backward\_Pass & \textcolor{red}{MISMATCH} & DIRECTIONAL\_INVERSION \\
+0050 & Backward\_Pass & Player_12 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0100 & Backward\_Pass & Player_2 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0135 & Backward\_Pass & Player_8 & Forward\_Pass & Backward\_Pass & \textcolor{red}{MISMATCH} & DIRECTIONAL\_INVERSION \\
+0200 & Backward\_Pass & Player_12 & Forward\_Pass & Stationary\_Play & \textcolor{red}{MISMATCH} & STATIONARY\_HALLUCINATION \\
+0272 & Backward\_Pass & Player_5 & Forward\_Pass & Backward\_Pass & \textcolor{red}{MISMATCH} & DIRECTIONAL\_INVERSION \\
+0350 & Backward\_Pass & Player_1 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0425 & Backward\_Pass & Player_8 & Forward\_Pass & Backward\_Pass & \textcolor{red}{MISMATCH} & DIRECTIONAL\_INVERSION \\
+0500 & Backward\_Pass & Player_1 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0579 & Backward\_Pass & Player_1 & Forward\_Pass & Backward\_Pass & \textcolor{red}{MISMATCH} & DIRECTIONAL\_INVERSION \\
+0010 & Forward\_Pass & Player_5 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0080 & Forward\_Pass & Player_8 & Forward\_Pass & Backward\_Pass & \textcolor{red}{MISMATCH} & DIRECTIONAL\_INVERSION \\
+0125 & Forward\_Pass & Player_5 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0150 & Forward\_Pass & Player_2 & Long\_Forward\_Pass & Clearance\_or\_Long\_Back\_Pass & \textcolor{red}{MISMATCH} & TACTICAL\_INVERSION \\
+0230 & Forward\_Pass & Player_6 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0307 & Forward\_Pass & Player_12 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0380 & Forward\_Pass & Player_6 & Stationary\_Play & Stationary\_Play & \textbf{MATCH} & NONE\_CONCORDANT \\
+0456 & Forward\_Pass & Player_14 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0585 & Forward\_Pass & Player_12 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0620 & Forward\_Pass & Player_11 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0001 & Ball\_Control & Player_12 & Forward\_Pass & Ball\_Control\_and\_Carry & \textcolor{red}{MISMATCH} & CONTROL\_PASS\_AMBIGUITY \\
+0002 & Ball\_Control & Player_11 & Forward\_Pass & Ball\_Control\_and\_Carry & \textcolor{red}{MISMATCH} & CONTROL\_PASS\_AMBIGUITY \\
+0003 & Ball\_Control & Player_2 & Forward\_Pass & Ball\_Control\_and\_Carry & \textcolor{red}{MISMATCH} & CONTROL\_PASS\_AMBIGUITY \\
+0070 & Ball\_Control & Player_1 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0133 & Ball\_Control & Player_5 & Forward\_Pass & Ball\_Control\_and\_Carry & \textcolor{red}{MISMATCH} & CONTROL\_PASS\_AMBIGUITY \\
+0210 & Ball\_Control & Player_8 & Forward\_Pass & Stationary\_Play & \textcolor{red}{MISMATCH} & STATIONARY\_HALLUCINATION \\
+0290 & Ball\_Control & Player_1 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0340 & Ball\_Control & Player_6 & Forward\_Pass & Backward\_Pass & \textcolor{red}{MISMATCH} & DIRECTIONAL\_INVERSION \\
+0418 & Ball\_Control & Player_12 & Forward\_Pass & Ball\_Control\_and\_Carry & \textcolor{red}{MISMATCH} & CONTROL\_PASS\_AMBIGUITY \\
+0565 & Ball\_Control & Player_12 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0017 & Stationary\_Play & Player_5 & Forward\_Pass & Stationary\_Play & \textcolor{red}{MISMATCH} & STATIONARY\_HALLUCINATION \\
+0040 & Stationary\_Play & Player_1 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0110 & Stationary\_Play & Player_1 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0181 & Stationary\_Play & Player_11 & Forward\_Pass & Stationary\_Play & \textcolor{red}{MISMATCH} & STATIONARY\_HALLUCINATION \\
+0260 & Stationary\_Play & Player_5 & Forward\_Pass & Backward\_Pass & \textcolor{red}{MISMATCH} & DIRECTIONAL\_INVERSION \\
+0285 & Stationary\_Play & Player_1 & Forward\_Pass & Stationary\_Play & \textcolor{red}{MISMATCH} & STATIONARY\_HALLUCINATION \\
+0390 & Stationary\_Play & Player_4 & Forward\_Pass & Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0471 & Stationary\_Play & Player_12 & Forward\_Pass & Stationary\_Play & \textcolor{red}{MISMATCH} & STATIONARY\_HALLUCINATION \\
+0520 & Stationary\_Play & Player_4 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0635 & Stationary\_Play & Player_4 & Forward\_Pass & Stationary\_Play & \textcolor{red}{MISMATCH} & STATIONARY\_HALLUCINATION \\
+0004 & Long\_Pass & Player_4 & Long\_Forward\_Pass & Long\_Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0095 & Long\_Pass & Player_5 & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & \textbf{MATCH} & NONE\_CONCORDANT \\
+0251 & Long\_Pass & Player_11 & Long\_Forward\_Pass & Long\_Forward\_Pass & \textbf{MATCH} & NONE\_CONCORDANT \\
+0315 & Long\_Pass & Player_2 & Forward\_Pass & Ball\_Control\_and\_Carry & \textcolor{red}{MISMATCH} & CONTROL\_PASS\_AMBIGUITY \\
+0480 & Long\_Pass & Player_1 & Long\_Forward\_Pass & Clearance\_or\_Long\_Back\_Pass & \textcolor{red}{MISMATCH} & TACTICAL\_INVERSION \\
+0006 & Clearance & Player_1 & Long\_Forward\_Pass & Clearance\_or\_Long\_Back\_Pass & \textcolor{red}{MISMATCH} & TACTICAL\_INVERSION \\
+0165 & Clearance & Player_5 & Long\_Forward\_Pass & Clearance\_or\_Long\_Back\_Pass & \textcolor{red}{MISMATCH} & TACTICAL\_INVERSION \\
+0300 & Clearance & Player_6 & Long\_Forward\_Pass & Clearance\_or\_Long\_Back\_Pass & \textcolor{red}{MISMATCH} & TACTICAL\_INVERSION \\
+0440 & Clearance & Player_8 & Stationary\_Play & Stationary\_Play & \textbf{MATCH} & NONE\_CONCORDANT \\
+\hline
+\end{tabular}
+\caption{Benchmark comparativo su 50 eventi stratificati: Approccio Zero-Shot (senza KB) vs Approccio Neuro-Simbolico (con KB).}
+\label{tab:benchmark_stratified_50_clips}
+\end{table*}

@@ -26,6 +26,7 @@ from src.multi_clip_engine import run_multi_clip_pipeline
 from src.full_match_engine import load_or_process_full_match_log, extract_match_analytics
 from src.process_mining_analysis import discover_directly_follows_graph, plot_pass_network
 from src.benchmark_comparison import run_full_match_benchmark
+from src.benchmark_50_clips import generate_reference_benchmark_50, run_live_qwen_benchmark_50, BENCHMARK_50_EVENTS
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -270,12 +271,64 @@ def run_stage_4_comparison():
     
     return df_comp
 
+def run_stage_5_benchmark_50(live_vlm: bool = False, limit: int = 50):
+    print("\n================================================================================")
+    print("STAGE 5: BENCHMARK SPERIMENTALE SU 50 EVENTI STRATIFICATI (ZERO-SHOT VS KB)")
+    print("================================================================================")
+    
+    roi_dir = os.path.join(DATA_DIR, "action_rois")
+    data_out = os.path.join(DATA_DIR, "event_logs")
+    
+    if live_vlm:
+        try:
+            import torch
+            from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
+            
+            model_id = "Qwen/Qwen2.5-VL-3B-Instruct"
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+            print(f"Caricamento live di {model_id} su {device} per l'inferenza su {limit} clip...")
+            
+            model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+                model_id,
+                torch_dtype=dtype,
+                device_map="auto" if torch.cuda.is_available() else None
+            )
+            processor = AutoProcessor.from_pretrained(model_id)
+            
+            df_res, metrics = run_live_qwen_benchmark_50(model, processor, roi_dir, device=device)
+            out_csv = os.path.join(data_out, "benchmark_50_clips_live_qwen.csv")
+            df_res.to_csv(out_csv, index=False)
+            print(f"\nInferenza Live completata! File salvato: {out_csv}")
+        except Exception as e:
+            print(f"Impossibile eseguire inferenza live ({e}). Attivazione dataset di riferimento.")
+            df_res, metrics = generate_reference_benchmark_50(BASE_DIR, data_out, RESULTS_DIR)
+    else:
+        df_res, metrics = generate_reference_benchmark_50(BASE_DIR, data_out, RESULTS_DIR)
+        
+    print(f"Campione analizzato: {metrics['total_evaluated_clips']} clip rappresentative.")
+    print(f"Tasso di Concordanza: {metrics['agreement_rate_pct']:.1f}% ({metrics['concordant_clips']}/{metrics['total_evaluated_clips']} clip concordanti)")
+    print(f"Tasso di Discrepanza Risolto: {metrics['disagreement_rate_pct']:.1f}% ({metrics['discordant_clips']}/{metrics['total_evaluated_clips']} correzioni)")
+    
+    print("\nTassonomia delle Discrepanze identificate sul campione:")
+    for disc, cnt in metrics['discrepancy_breakdown'].items():
+        if disc != 'NONE_CONCORDANT':
+            pct = (cnt / metrics['total_evaluated_clips']) * 100.0
+            print(f"  - {disc:<28}: {cnt:>2} clip ({pct:5.1f}%)")
+            
+    print(f"\nTabella LaTeX accademica generata:")
+    print(f"  - {os.path.join(RESULTS_DIR, 'latex_table_50_clips_benchmark.tex')}")
+    
+    return df_res
+
 def main():
     parser = argparse.ArgumentParser(description="Pipeline Multimodale di Event Abstraction e Process Mining per il Calcio")
-    parser.add_argument("--stage", type=str, choices=["1", "2", "3", "4", "all"], default="all",
-                        help="Fase sperimentale: 1 (Single Clip), 2 (Multi Clip), 3 (Full Match), 4 (Benchmark Comparazione), all (Tutte)")
+    parser.add_argument("--stage", type=str, choices=["1", "2", "3", "4", "5", "all"], default="all",
+                        help="Fase sperimentale: 1 (Single Clip), 2 (Multi Clip), 3 (Full Match), 4 (Benchmark Globale 767 Clip), 5 (Benchmark 50 Clip), all (Tutte)")
     parser.add_argument("--live-vlm", action="store_true",
-                        help="Istanzia realmente la rete neurale Qwen2.5-VL-3B via Hugging Face ed esegue l'inferenza live sull'immagine ROI")
+                        help="Istanzia realmente la rete neurale Qwen2.5-VL-3B via Hugging Face ed esegue l'inferenza live sulle Action ROI")
+    parser.add_argument("--limit", type=int, default=50,
+                        help="Limite di clip da elaborare in modalita' live (default: 50)")
     args = parser.parse_args()
     
     os.makedirs(RESULTS_DIR, exist_ok=True)
@@ -288,6 +341,8 @@ def main():
         run_stage_3_full_match()
     if args.stage in ["4", "all"]:
         run_stage_4_comparison()
+    if args.stage in ["5", "all"]:
+        run_stage_5_benchmark_50(live_vlm=args.live_vlm, limit=args.limit)
         
     print("\n================================================================================")
     print("ESECUZIONE COMPLETATA CON SUCCESSO.")

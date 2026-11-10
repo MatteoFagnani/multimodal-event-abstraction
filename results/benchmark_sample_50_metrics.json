@@ -1,0 +1,23 @@
+{
+    "total_evaluated_clips": 50,
+    "concordant_clips": 23,
+    "discordant_clips": 27,
+    "agreement_rate_pct": 46.0,
+    "disagreement_rate_pct": 54.0,
+    "discrepancy_breakdown": {
+        "NONE_CONCORDANT": 23,
+        "DIRECTIONAL_INVERSION": 8,
+        "STATIONARY_HALLUCINATION": 7,
+        "CONTROL_PASS_AMBIGUITY": 6,
+        "TACTICAL_INVERSION": 5,
+        "REGULATORY_OMISSION": 1
+    },
+    "process_mining_impact_breakdown": {
+        "Transizione corretta": 23,
+        "Inversione del flusso causale nel processo": 8,
+        "Falso loop di attivita' in fase di gioco fermo": 7,
+        "Distorsione della granularita' dell'attivita'": 6,
+        "Inversione tattica attacco/difesa nel grafo": 5,
+        "Mancata identificazione formale dell'avvio processo": 1
+    }
+}
