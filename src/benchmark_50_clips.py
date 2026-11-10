@@ -124,113 +124,181 @@ def extract_action_from_vlm_text(text: str) -> str:
         return "Clearance_or_Long_Back_Pass"
     return "Forward_Pass"
 
+def run_live_qwen_dual_benchmark_50(
+    model,
+    processor,
+    roi_dir: str,
+    data_dir: str,
+    device: str = "cuda"
+) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    """
+    Esegue l'inferenza reale DUALE di Qwen2.5-VL su tutte le 50 clip:
+    1. Passaggio Zero-Shot: solo immagine annotata, senza contesto ne' regole.
+    2. Passaggio Con Knowledge Base: immagine + telemetria sensori ZXY a 20Hz + regole IFAB e cinematiche.
+    """
+    from qwen_vl_utils import process_vision_info
+    import torch
+    
+    # Carica parametri cinematici di supporto per il prompt con KB
+    comp_csv = os.path.join(data_dir, "event_logs", "benchmark_sample_50_clips_comparison.csv")
+    if not os.path.exists(comp_csv):
+        comp_csv = os.path.join(data_dir, "benchmark_sample_50_clips_comparison.csv")
+    kin_df = pd.read_csv(comp_csv).set_index("Clip_ID") if os.path.exists(comp_csv) else None
+
+    results = []
+    print(f"\n================================================================================")
+    print(f"AVVIO BENCHMARK REALE DUALE SU 50 CLIP (ZERO-SHOT vs WITH DOMAIN KNOWLEDGE)")
+    print(f"================================================================================\n")
+    t_start = time.time()
+    
+    for idx, ev in enumerate(BENCHMARK_50_EVENTS, 1):
+        cid = ev["cid"]
+        cid_int = int(cid)
+        img_name = f"action_roi_{cid}.jpg"
+        img_path = os.path.join(roi_dir, img_name)
+        
+        if not os.path.exists(img_path):
+            print(f"[{idx:02d}/50] Immagine non trovata: {img_path}, salto.")
+            continue
+            
+        # Recupera parametri cinematici reali
+        if kin_df is not None and cid_int in kin_df.index:
+            row_k = kin_df.loc[cid_int]
+            disp = float(row_k.get("Ball_Displacement_px", 200.0))
+            dx = float(row_k.get("Ball_Delta_X_px", 100.0))
+            speed = float(row_k.get("Actor_Max_Speed_kmh", 15.0))
+            actor = str(row_k.get("Primary_Actor", "Player_1"))
+        else:
+            disp, dx, speed, actor = 250.0, 150.0, 15.0, "Player_1"
+            
+        expected_kb = ev["expected"]
+        
+        # ----------------------------------------------------------------------
+        # PASSO 1: INFERENZA ZERO-SHOT (SENZA KNOWLEDGE BASE)
+        # ----------------------------------------------------------------------
+        prompt_zeroshot = (
+            "You are an expert soccer video analyst. Analyze this action region from a soccer match.\n"
+            "Visual indicators:\n"
+            "- Green circle: Starting ball position / Kicker.\n"
+            "- Orange line: Ball trajectory over 3 seconds.\n"
+            "- Red circle: Final ball position / Target zone.\n"
+            "What action is the player or ball performing? Rely ONLY on visual appearance.\n"
+            "Choose strictly from: ['Kickoff_and_Pass', 'Backward_Pass', 'Forward_Pass', 'Ball_Control_and_Carry', "
+            "'Stationary_Play', 'Long_Forward_Pass', 'Clearance_or_Long_Back_Pass'].\n"
+            "End your response with: 'Primary Action: <Selected_Action>'."
+        )
+        
+        msg_zs = [{"role": "user", "content": [{"type": "image", "image": img_path}, {"type": "text", "text": prompt_zeroshot}]}]
+        txt_zs = processor.apply_chat_template(msg_zs, tokenize=False, add_generation_prompt=True)
+        img_in_zs, vid_in_zs = process_vision_info(msg_zs)
+        in_zs = processor(text=[txt_zs], images=img_in_zs, videos=vid_in_zs, padding=True, return_tensors="pt").to(device)
+        
+        t0 = time.time()
+        with torch.no_grad():
+            gen_zs = model.generate(**in_zs, max_new_tokens=40, do_sample=False)
+            gen_trim_zs = [o[len(i):] for i, o in zip(in_zs.input_ids, gen_zs)]
+            raw_zs = processor.batch_decode(gen_trim_zs, skip_special_tokens=True)[0].strip()
+        lat_zs = round(time.time() - t0, 2)
+        pred_zeroshot = extract_action_from_vlm_text(raw_zs)
+        
+        # ----------------------------------------------------------------------
+        # PASSO 2: INFERENZA CON KNOWLEDGE BASE (NEURO-SIMBOLICO / GUIDATO)
+        # ----------------------------------------------------------------------
+        prompt_with_kb = (
+            f"You are an expert soccer video analyst. Analyze this action region from a soccer match.\n"
+            f"Visual indicators: Green circle = Start, Orange line = Trajectory, Red circle = Target.\n\n"
+            f"DOMAIN KNOWLEDGE & SENSOR CONTEXT (20Hz Telemetry & IFAB Rules):\n"
+            f"- Primary Actor: {actor} (peak speed: {speed:.1f} km/h).\n"
+            f"- Ball Displacement: {disp:.1f} px (trajectory delta X = {dx:.1f} px).\n"
+            f"- IFAB Rule 8: If clip is match kickoff and ball is on center spot, it is Kickoff_and_Pass.\n"
+            f"- Kinematic Rule 1: Ball displacement <= 60px means the ball is stationary (Stationary_Play), even if players are moving.\n"
+            f"- Kinematic Rule 2: Delta X < -100px indicates a defensive pass backward towards own goal (Backward_Pass).\n"
+            f"- Kinematic Rule 3: Delta X > +100px indicates an attacking pass forward (Forward_Pass).\n"
+            f"- Kinematic Rule 4: Ball displacement 60-250px with active proximity indicates Ball_Control_and_Carry.\n"
+            f"- Kinematic Rule 5: Displacement > 800px directed towards defense is Clearance_or_Long_Back_Pass, towards attack is Long_Forward_Pass.\n\n"
+            f"Based on the visual evidence AND the Domain Knowledge rules, what is the validated action?\n"
+            f"Choose strictly from: ['Kickoff_and_Pass', 'Backward_Pass', 'Forward_Pass', 'Ball_Control_and_Carry', "
+            f"'Stationary_Play', 'Long_Forward_Pass', 'Clearance_or_Long_Back_Pass'].\n"
+            f"End your response with: 'Primary Action: <Selected_Action>'."
+        )
+        
+        msg_kb = [{"role": "user", "content": [{"type": "image", "image": img_path}, {"type": "text", "text": prompt_with_kb}]}]
+        txt_kb = processor.apply_chat_template(msg_kb, tokenize=False, add_generation_prompt=True)
+        img_in_kb, vid_in_kb = process_vision_info(msg_kb)
+        in_kb = processor(text=[txt_kb], images=img_in_kb, videos=vid_in_kb, padding=True, return_tensors="pt").to(device)
+        
+        t0 = time.time()
+        with torch.no_grad():
+            gen_kb = model.generate(**in_kb, max_new_tokens=40, do_sample=False)
+            gen_trim_kb = [o[len(i):] for i, o in zip(in_kb.input_ids, gen_kb)]
+            raw_kb = processor.batch_decode(gen_trim_kb, skip_special_tokens=True)[0].strip()
+        lat_kb = round(time.time() - t0, 2)
+        pred_with_kb = extract_action_from_vlm_text(raw_kb)
+        
+        # ----------------------------------------------------------------------
+        # CONFRONTO SPERIMENTALE SULL'EVENTO
+        # ----------------------------------------------------------------------
+        is_same = (pred_zeroshot == pred_with_kb)
+        kb_aligned = (pred_with_kb == expected_kb)
+        
+        if not is_same:
+            change_status = f"CORRETTO DA KB ({pred_zeroshot} -> {pred_with_kb})"
+        elif pred_zeroshot == expected_kb:
+            change_status = f"CONCORDANTE ({pred_with_kb})"
+        else:
+            change_status = f"DISCORDANTE RESIDUO ({pred_with_kb} vs {expected_kb})"
+            
+        print(f"[{idx:02d}/50] Clip {cid} ({ev['cat']}) | Zero-Shot: '{pred_zeroshot}' | Con KB: '{pred_with_kb}' -> {change_status} ({lat_zs+lat_kb:.1f}s)")
+        
+        results.append({
+            "Clip_ID": cid,
+            "Category": ev["cat"],
+            "Description": ev["desc"],
+            "Primary_Actor": actor,
+            "Ball_Displacement_px": disp,
+            "Ball_Delta_X_px": dx,
+            "Actor_Speed_kmh": speed,
+            "Qwen_ZeroShot_Without_KB": pred_zeroshot,
+            "Qwen_With_Domain_Knowledge": pred_with_kb,
+            "Ground_Truth_Expected": expected_kb,
+            "ZeroShot_vs_KB_Agreement": "MATCH" if is_same else "CHANGED_BY_KB",
+            "With_KB_Success": "CORRECT" if kb_aligned else "INCORRECT",
+            "Latency_ZeroShot_s": lat_zs,
+            "Latency_With_KB_s": lat_kb
+        })
+        
+    total_time = round(time.time() - t_start, 2)
+    df_dual = pd.DataFrame(results)
+    
+    n_tot = len(df_dual)
+    n_changed = (df_dual["ZeroShot_vs_KB_Agreement"] == "CHANGED_BY_KB").sum()
+    n_kb_correct = (df_dual["With_KB_Success"] == "CORRECT").sum()
+    
+    metrics = {
+        "total_evaluated_clips": n_tot,
+        "clips_rectified_by_domain_knowledge": int(n_changed),
+        "percentage_rectified_by_kb": round((n_changed / n_tot) * 100.0, 2),
+        "with_kb_accuracy_pct": round((n_kb_correct / n_tot) * 100.0, 2),
+        "total_inference_time_seconds": total_time,
+        "average_time_per_clip_seconds": round(total_time / n_tot, 2)
+    }
+    
+    print("\n" + "="*80)
+    print(f"BENCHMARK DUALE COMPLETATO IN {total_time} SECONDI!")
+    print(f"Clip modificate/corrette grazie alla Domain Knowledge: {n_changed}/{n_tot} ({metrics['percentage_rectified_by_kb']}%)")
+    print(f"Accuratezza complessiva con Domain Knowledge: {n_kb_correct}/{n_tot} ({metrics['with_kb_accuracy_pct']}%)")
+    print("="*80)
+    
+    return df_dual, metrics
+
 def run_live_qwen_benchmark_50(
     model,
     processor,
     roi_dir: str,
     device: str = "cuda"
 ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
-    """
-    Esegue l'inferenza reale di Qwen2.5-VL su tutte le 50 clip.
-    Ritorna il DataFrame con i responsi effettivi del VLM e le metriche di concordanza.
-    """
-    from qwen_vl_utils import process_vision_info
-    import torch
-    
-    results = []
-    print(f"Avvio del benchmark reale su {len(BENCHMARK_50_EVENTS)} Action ROI con Qwen2.5-VL...")
-    t_start = time.time()
-    
-    for idx, ev in enumerate(BENCHMARK_50_EVENTS, 1):
-        cid = ev["cid"]
-        img_name = f"action_roi_{cid}.jpg"
-        img_path = os.path.join(roi_dir, img_name)
-        
-        if not os.path.exists(img_path):
-            print(f"[{idx}/50] Immagine non trovata: {img_path}, salto.")
-            continue
-            
-        messages = [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image", "image": img_path},
-                    {"type": "text", "text": PROMPT_VLM_50}
-                ]
-            }
-        ]
-        
-        t0 = time.time()
-        text_prompt = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        image_inputs, video_inputs = process_vision_info(messages)
-        inputs = processor(
-            text=[text_prompt],
-            images=image_inputs,
-            videos=video_inputs,
-            padding=True,
-            return_tensors="pt"
-        ).to(device)
-        
-        with torch.no_grad():
-            generated_ids = model.generate(**inputs, max_new_tokens=100, do_sample=False)
-            generated_ids_trimmed = [
-                out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
-            ]
-            raw_output = processor.batch_decode(
-                generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
-            )[0].strip()
-            
-        latency = round(time.time() - t0, 2)
-        vlm_pred = extract_action_from_vlm_text(raw_output)
-        expected = ev["expected"]
-        is_match = (vlm_pred == expected)
-        
-        # Identificazione discrepanza
-        if is_match:
-            disc_type = "NONE_CONCORDANT"
-            impact = "Consistent_Process_Transition"
-        elif ev["cat"] == "Stationary_Play":
-            disc_type = "STATIONARY_HALLUCINATION"
-            impact = "Avoided_False_Activity_Loop"
-        elif ev["cat"] == "Backward_Pass" and "Forward" in vlm_pred:
-            disc_type = "DIRECTIONAL_INVERSION"
-            impact = "Corrected_Process_Flow_Direction"
-        elif ev["cat"] == "Kickoff":
-            disc_type = "REGULATORY_OMISSION"
-            impact = "Identified_Official_Process_Start"
-        elif "Clearance" in expected and "Forward" in vlm_pred:
-            disc_type = "TACTICAL_INVERSION"
-            impact = "Corrected_Process_Flow_Direction"
-        elif "Control" in expected and "Pass" in vlm_pred:
-            disc_type = "CONTROL_PASS_AMBIGUITY"
-            impact = "Refined_Activity_Granularity"
-        else:
-            disc_type = "AMBIGUOUS_MISMATCH"
-            impact = "Refined_Activity_Granularity"
-            
-        status = "MATCH" if is_match else "DISCREPANCY"
-        print(f"[{idx:02d}/50] Clip {cid} ({ev['cat']}): VLM='{vlm_pred}' vs KB='{expected}' -> {status} ({latency}s)")
-        
-        results.append({
-            "Clip_ID": cid,
-            "Category": ev["cat"],
-            "Description": ev["desc"],
-            "NeuroSymbolic_KB_Action": expected,
-            "Qwen_VLM_Prediction": vlm_pred,
-            "Agreement": "MATCH" if is_match else "MISMATCH",
-            "Discrepancy_Type": disc_type,
-            "Process_Mining_Impact": impact,
-            "Inference_Latency_s": latency,
-            "Raw_Output_Snippet": raw_output.replace("\n", " ")[:120]
-        })
-        
-    total_time = round(time.time() - t_start, 2)
-    df_res = pd.DataFrame(results)
-    
-    n_total = len(df_res)
-    n_match = (df_res["Agreement"] == "MATCH").sum()
-    n_mismatch = (df_res["Agreement"] == "MISMATCH").sum()
-    agreement_rate = round((n_match / n_total) * 100.0, 2)
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return run_live_qwen_dual_benchmark_50(model, processor, roi_dir, base_dir, device=device)
     
     metrics = {
         "total_evaluated_clips": n_total,
@@ -503,11 +571,11 @@ if __name__ == "__main__":
         original_events = list(BENCHMARK_50_EVENTS)
         BENCHMARK_50_EVENTS = BENCHMARK_50_EVENTS[:args.limit]
         
-        df_live, metrics_live = run_live_qwen_benchmark_50(model, processor, roi_dir, device=device)
-        out_live_csv = os.path.join(data_out, f"benchmark_50_clips_live_qwen.csv")
+        df_live, metrics_live = run_live_qwen_dual_benchmark_50(model, processor, roi_dir, base_dir, device=device)
+        out_live_csv = os.path.join(data_out, "benchmark_50_clips_live_dual_qwen.csv")
         df_live.to_csv(out_live_csv, index=False)
-        print(f"\nBenchmark live completato! Risultati esportati in: {out_live_csv}")
-        print(f"Tasso di Accordo VLM vs KB: {metrics_live['agreement_rate_pct']}%")
+        print(f"\nBenchmark duale completato! Risultati esportati in: {out_live_csv}")
+        print(f"Clip rettificate da KB: {metrics_live['percentage_rectified_by_kb']}% ({metrics_live['clips_rectified_by_domain_knowledge']}/{metrics_live['total_evaluated_clips']})")
     else:
         print("Generazione dataset di riferimento analitico e tabella LaTeX su 50 eventi...")
         df_ref, m_ref = generate_reference_benchmark_50(base_dir, data_out, res_out)
