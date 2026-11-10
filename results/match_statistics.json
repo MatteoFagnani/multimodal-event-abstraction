@@ -1,8 +1,7 @@
 {
+    "total_clips": 767,
     "total_events": 6451,
-    "ball_action_events": 767,
-    "player_kinematic_events": 5684,
-    "unique_clips": 767,
+    "duration_minutes": 38.35,
     "ball_activity_distribution": {
         "Ball_Control_and_Carry": 239,
         "Stationary_Play": 158,
@@ -13,72 +12,198 @@
         "Lateral_Pass": 8,
         "Kickoff_and_Pass": 1
     },
+    "player_stats": [
+        {
+            "Player": "Player_1",
+            "Distance_Covered_km": 4.24,
+            "Max_Speed_kmh": 33.28,
+            "Sprint_Count (>18km/h)": 96,
+            "Passes_Initiated": 50
+        },
+        {
+            "Player": "Player_2",
+            "Distance_Covered_km": 4.49,
+            "Max_Speed_kmh": 33.96,
+            "Sprint_Count (>18km/h)": 118,
+            "Passes_Initiated": 30
+        },
+        {
+            "Player": "Player_4",
+            "Distance_Covered_km": 4.05,
+            "Max_Speed_kmh": 38.34,
+            "Sprint_Count (>18km/h)": 74,
+            "Passes_Initiated": 26
+        },
+        {
+            "Player": "Player_5",
+            "Distance_Covered_km": 2.21,
+            "Max_Speed_kmh": 38.42,
+            "Sprint_Count (>18km/h)": 67,
+            "Passes_Initiated": 44
+        },
+        {
+            "Player": "Player_6",
+            "Distance_Covered_km": 4.28,
+            "Max_Speed_kmh": 34.52,
+            "Sprint_Count (>18km/h)": 79,
+            "Passes_Initiated": 45
+        },
+        {
+            "Player": "Player_8",
+            "Distance_Covered_km": 4.75,
+            "Max_Speed_kmh": 33.23,
+            "Sprint_Count (>18km/h)": 140,
+            "Passes_Initiated": 44
+        },
+        {
+            "Player": "Player_11",
+            "Distance_Covered_km": 4.56,
+            "Max_Speed_kmh": 34.82,
+            "Sprint_Count (>18km/h)": 116,
+            "Passes_Initiated": 43
+        },
+        {
+            "Player": "Player_12",
+            "Distance_Covered_km": 4.58,
+            "Max_Speed_kmh": 38.3,
+            "Sprint_Count (>18km/h)": 90,
+            "Passes_Initiated": 53
+        },
+        {
+            "Player": "Player_14",
+            "Distance_Covered_km": 4.06,
+            "Max_Speed_kmh": 31.21,
+            "Sprint_Count (>18km/h)": 77,
+            "Passes_Initiated": 35
+        }
+    ],
+    "pass_transitions": {
+        "Player_2 -> Player_4": 4,
+        "Player_4 -> Player_14": 4,
+        "Player_14 -> Player_1": 6,
+        "Player_5 -> Player_6": 4,
+        "Player_6 -> Player_5": 4,
+        "Player_5 -> Player_4": 1,
+        "Player_2 -> Player_5": 4,
+        "Player_5 -> Player_8": 8,
+        "Player_8 -> Player_12": 9,
+        "Player_12 -> Player_8": 9,
+        "Player_8 -> Player_5": 8,
+        "Player_5 -> Player_11": 1,
+        "Player_11 -> Player_1": 7,
+        "Player_1 -> Player_2": 4,
+        "Player_8 -> Player_2": 6,
+        "Player_6 -> Player_12": 9,
+        "Player_12 -> Player_1": 8,
+        "Player_6 -> Player_14": 5,
+        "Player_14 -> Player_11": 2,
+        "Player_11 -> Player_12": 7,
+        "Player_2 -> Player_11": 4,
+        "Player_1 -> Player_14": 6,
+        "Player_5 -> Player_14": 1,
+        "Player_1 -> Player_6": 8,
+        "Player_6 -> Player_1": 7,
+        "Player_1 -> Player_5": 3,
+        "Player_12 -> Player_11": 6,
+        "Player_1 -> Player_11": 9,
+        "Player_12 -> Player_6": 5,
+        "Player_12 -> Player_5": 7,
+        "Player_5 -> Player_12": 6,
+        "Player_12 -> Player_4": 3,
+        "Player_4 -> Player_12": 4,
+        "Player_5 -> Player_1": 2,
+        "Player_14 -> Player_12": 4,
+        "Player_5 -> Player_2": 2,
+        "Player_2 -> Player_1": 2,
+        "Player_6 -> Player_2": 3,
+        "Player_2 -> Player_6": 4,
+        "Player_6 -> Player_8": 1,
+        "Player_14 -> Player_4": 8,
+        "Player_2 -> Player_8": 3,
+        "Player_8 -> Player_1": 1,
+        "Player_1 -> Player_8": 3,
+        "Player_12 -> Player_14": 6,
+        "Player_4 -> Player_8": 6,
+        "Player_6 -> Player_11": 5,
+        "Player_11 -> Player_6": 6,
+        "Player_4 -> Player_5": 1,
+        "Player_8 -> Player_11": 7,
+        "Player_11 -> Player_5": 1,
+        "Player_8 -> Player_6": 4,
+        "Player_11 -> Player_2": 4,
+        "Player_2 -> Player_12": 3,
+        "Player_8 -> Player_4": 3,
+        "Player_1 -> Player_4": 2,
+        "Player_14 -> Player_6": 5,
+        "Player_12 -> Player_2": 5,
+        "Player_11 -> Player_8": 5,
+        "Player_4 -> Player_1": 5,
+        "Player_14 -> Player_2": 1,
+        "Player_2 -> Player_14": 1,
+        "Player_4 -> Player_2": 1,
+        "Player_1 -> Player_12": 2,
+        "Player_14 -> Player_8": 1,
+        "Player_6 -> Player_4": 2,
+        "Player_8 -> Player_14": 1,
+        "Player_4 -> Player_11": 2,
+        "Player_11 -> Player_4": 1,
+        "Player_4 -> Player_6": 1
+    },
+    "unique_clips": 767,
     "player_performance": {
         "Player_1": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 205,
-            "passes_initiated": 0
-        },
-        "Player_10": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 0,
-            "passes_initiated": 0
-        },
-        "Player_11": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 345,
-            "passes_initiated": 0
-        },
-        "Player_12": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 262,
-            "passes_initiated": 0
-        },
-        "Player_14": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 241,
-            "passes_initiated": 0
+            "total_displacement_km": 4.24,
+            "max_speed_kmh": 33.28,
+            "sprint_count": 96,
+            "passes_initiated": 50
         },
         "Player_2": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 313,
-            "passes_initiated": 0
+            "total_displacement_km": 4.49,
+            "max_speed_kmh": 33.96,
+            "sprint_count": 118,
+            "passes_initiated": 30
         },
         "Player_4": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 241,
-            "passes_initiated": 0
+            "total_displacement_km": 4.05,
+            "max_speed_kmh": 38.34,
+            "sprint_count": 74,
+            "passes_initiated": 26
         },
         "Player_5": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 111,
-            "passes_initiated": 0
+            "total_displacement_km": 2.21,
+            "max_speed_kmh": 38.42,
+            "sprint_count": 67,
+            "passes_initiated": 44
         },
         "Player_6": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 209,
-            "passes_initiated": 0
+            "total_displacement_km": 4.28,
+            "max_speed_kmh": 34.52,
+            "sprint_count": 79,
+            "passes_initiated": 45
         },
         "Player_8": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 313,
-            "passes_initiated": 0
+            "total_displacement_km": 4.75,
+            "max_speed_kmh": 33.23,
+            "sprint_count": 140,
+            "passes_initiated": 44
         },
-        "Player_9": {
-            "total_displacement_km": 0.0,
-            "max_speed_kmh": 0.0,
-            "sprint_count": 0,
-            "passes_initiated": 0
+        "Player_11": {
+            "total_displacement_km": 4.56,
+            "max_speed_kmh": 34.82,
+            "sprint_count": 116,
+            "passes_initiated": 43
+        },
+        "Player_12": {
+            "total_displacement_km": 4.58,
+            "max_speed_kmh": 38.3,
+            "sprint_count": 90,
+            "passes_initiated": 53
+        },
+        "Player_14": {
+            "total_displacement_km": 4.06,
+            "max_speed_kmh": 31.21,
+            "sprint_count": 77,
+            "passes_initiated": 35
         }
     }
 }
