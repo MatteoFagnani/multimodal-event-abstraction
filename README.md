@@ -1,237 +1,154 @@
-# Event Abstraction con Domain Knowledge per il Process Mining su Flussi Multimodali nel Calcio Professionistico
+# Event Abstraction e Process Mining su Flussi Multimodali nel Calcio
 
-**Tesi di Laurea Triennale in Informatica | Universita' di Camerino (UNICAM)**  
-**Candidato:** Matteo Fagnani  
-**Relatrice:** Prof.ssa Barbara Re  
-**Dataset di Riferimento:** Alfheim Dataset (Tromso IL vs Tottenham Hotspurs, 2013-11-28)
+Repository di test e sperimentazione per la pipeline di **Event Abstraction** e **Process Mining** applicata a flussi multimodali nel calcio professionistico, basata sul dataset accademico **Alfheim** (*Tromso IL vs Tottenham Hotspurs*, 28-11-2013).
 
----
-
-## 1. Abstract e Obiettivi Scientifici
-
-L'applicazione del Process Mining all'analisi del calcio professionistico presenta una criticita' metodologica fondamentale nota come *abstraction gap*: il disallineamento ontologico tra dati sensoriali a basso livello (coordinate cartesiane frame-per-frame, telemetria corporea ad alta frequenza, registrazioni video continue) e gli eventi discreti ad alto livello semantico richiesti dagli algoritmi di process discovery (passaggi, controlli orientati, fasi di possesso, transizioni tattiche).
-
-Questo progetto sviluppa e valida un framework di **Event Abstraction Ibrido e Neuro-Simbolico** progettato per:
-1. **Integrare ed Allineare Flussi Multimodali Eterogenei:** Flussi video panoramici rettificati ad alta definizione (4450x2000 pixel), coordinate di tracciamento continuo del pallone (campionate a 25Hz) e telemetria metrica dei sensori indossabili ZXY a 20Hz (posizione $x,y$, velocita' scalare, accelerazione e dislocazione).
-2. **Guidare l'Attenzione Visiva tramite Visual Prompting:** Generazione deterministica di ritagli spaziali centrate sull'azione (*Action Region of Interest* - Action ROI), arricchite con evidenziatori semiotici *Set-of-Marks* (SoM): cerchio verde sul calciatore attore (*kicker*), vettore policromatico arancione della traiettoria reale e cerchio rosso sulla zona di destinazione.
-3. **Valutare Empiricamente Modelli di Vision-Language (VLM):** Sottoporre a test formale il modello multimodale di ultima generazione *Qwen2.5-VL-3B-Instruct*, quantificandone i limiti percettivi (allucinazioni di movimento su palla ferma, inversioni direzionali prospettiche, ambiguita' tra controllo e passaggio).
-4. **Implementare un Motore di Validazione Neuro-Simbolico con Domain Knowledge:** Formalizzare in un insieme rigoroso di regole di dominio cinematiche e regolamentari (regolamento ufficiale IFAB) la conoscenza a priori del gioco del calcio, correggendo le allucinazioni del VLM e garantendo la verita' a terra dell'evento.
-5. **Generare Event Log Standard IEEE XES ed Eseguire Process Mining su Scala Globale:** Trasformare l'intero primo tempo di gioco (767 clip, 38.35 minuti effettivi) in un Event Log compresso e strutturato, scoprendo tramite la libreria scientifica **PM4Py** il modello di processo formale (*Directly-Follows Graph* - DFG) e la rete sociale delle interazioni di passaggio (*Social Network Analysis*).
+La repository contiene il codice sorgente, i campioni di dati pre-estratti, i notebook per l'esecuzione su Google Colab e gli artefatti prodotti dai test sperimentali (Event Log conformi a IEEE XES, modelli di processo scoperti con PM4Py, metriche e tabelle comparative).
 
 ---
 
-## 2. Architettura del Sistema
+## Struttura della Repository
 
-Il flusso di elaborazione e' articolato in stadi cooperanti:
-
-```
-[Flussi Dati Multimodali Alfheim]
-   ├── Video Panoramico HD (4450x2000 px)
-   ├── Tracciamento Palla 2D (frame-by-frame)
-   └── Sensori Indossabili ZXY 20Hz (x, y, v, a)
-             │
-             ▼
-[1. Action ROI & Visual Prompting (Set-of-Marks)]
-   ├── Calcolo del centroide di movimento della palla
-   └── Annotazione semiotica (Kicker Verde, Vettore Arancione, Target Rosso)
-             │
-             ▼
-[2. Valutazione Ibrida Neuro-Simbolica]
-   ├── Ramo A (VLM Puro Zero-Shot): Predizione semantica visuale
-   └── Ramo B (Domain Knowledge): Verifica cinematica e regolamentare IFAB
-             │
-             ▼
-[3. Event Abstraction & Generazione Log IEEE XES]
-   ├── Traccia di possesso collettivo (Case: 'Possession_Phase')
-   └── Tracce prestazionali individuali (Case: 'Player_ID_Trace')
-             │
-             ▼
-[4. Process Mining & Analisi Tattica (PM4Py)]
-   ├── Directly-Follows Graph (DFG) con frequenze di transizione
-   ├── Social Network Analysis (Handover of Work / Rete dei Passaggi)
-   └── Indicatori fisici e atletici (distanze, sprint ad alta velocita')
-```
-
----
-
-## 3. Struttura del Repository
-
-La cartella del progetto e' strutturata in modo modulare, auto-consistente e priva di file ridondanti:
-
-```
+```text
 thesis-multimodal-event-abstraction/
-├── .gitignore                          # Esclusioni per bytecode, cache e file pesanti
-├── README.md                           # Relazione scientifica ed architetturale del progetto
-├── requirements.txt                    # Elenco delle dipendenze Python replicabili
-├── run_experiments.py                  # Script CLI principale per l'esecuzione degli esperimenti
+├── README.md                           # Documentazione tecnica della repository
+├── requirements.txt                    # Dipendenze software Python
+├── run_experiments.py                  # Script CLI per l'esecuzione modulare dei test
 ├── notebooks/
-│   └── pipeline_experimentation.ipynb  # Notebook sperimentale (eseguibile su Google Colab o locale)
+│   └── pipeline_experimentation.ipynb  # Notebook interattivo per la riproduzione su Google Colab
 ├── src/
-│   ├── __init__.py                     # Package init
-│   ├── config.py                       # Costanti metriche, dimensioni del campo e soglie cinematiche
-│   ├── data_loader.py                  # Ingestione e filtraggio dei campionamenti telemetrici
-│   ├── visual_prompting.py             # Algoritmi di ritaglio Action ROI e annotazione Set-of-Marks
-│   ├── domain_rules.py                 # Motore inferenziale a regole di dominio (IFAB + cinematica)
-│   ├── multi_clip_engine.py            # Motore di elaborazione sequenziale multi-clip (0000 - 0005)
-│   ├── full_match_engine.py            # Motore di astrazione su scala globale (intero primo tempo, 767 clip)
-│   ├── process_mining_analysis.py      # Scoperta di processi con PM4Py, grafi DFG e reti sociali
-│   ├── benchmark_comparison.py         # Modulo di benchmarking globale (767 clip)
-│   └── benchmark_50_clips.py           # Benchmark stratificato su 50 eventi e driver di inferenza duale
+│   ├── __init__.py                     # Inizializzazione package Python
+│   ├── config.py                       # Costanti metriche, coordinate del campo e soglie
+│   ├── data_loader.py                  # Caricamento e filtraggio di sensori ZXY e tracciamento palla
+│   ├── visual_prompting.py             # Algoritmi di ritaglio Action ROI e annotazioni Set-of-Marks
+│   ├── domain_rules.py                 # Motore a regole di dominio (cinematica e regolamento IFAB)
+│   ├── multi_clip_engine.py            # Elaborazione della sequenza continua (clip 0000 - 0005)
+│   ├── full_match_engine.py            # Elaborazione sull'intero primo tempo (767 clip)
+│   ├── process_mining_analysis.py      # Scoperta di grafi DFG e Social Network Analysis con PM4Py
+│   ├── benchmark_comparison.py         # Test comparativo su scala intero match (767 clip)
+│   └── benchmark_50_clips.py           # Benchmark su 50 eventi e driver di inferenza neurale
 ├── data/
-│   ├── README.md                       # Documentazione descrittiva sui dati
-│   ├── ball_tracks/                    # Tracciamenti bidimensionali palla (clip 0000 - 0005)
-│   ├── action_rois/                    # 50 Action ROI annotate con visual prompting Set-of-Marks
-│   ├── sensors/                        # Slices di telemetria a 20Hz (clip 0000 e multi-clip 18s)
+│   ├── README.md                       # Dettaglio sui dati inclusi nella cartella
+│   ├── action_rois/                    # 50 immagini ritagliate con annotatori Set-of-Marks
+│   ├── ball_tracks/                    # Coordinate frame-by-frame della palla (clip 0000 - 0005)
+│   ├── sensors/                        # Estratti di telemetria dei sensori ZXY a 20Hz
 │   └── event_logs/
-│       ├── event_log_multi_clip.csv    # Event Log multi-entita' per i primi 18 secondi di gioco
-│       ├── event_log_full_first_half.csv # Event Log globale di 6.451 eventi validati (767 clip)
-│       ├── comparison_dataset_zero_shot_vs_domain_rules.csv # Dataset comparativo full-match (767 clip)
-│       ├── benchmark_sample_50_clips_comparison.csv # Dataset di riferimento benchmark (50 eventi)
-│       └── benchmark_50_clips_live_dual_qwen.csv    # Valutazione empirica duale live con Qwen2.5-VL
+│       ├── event_log_multi_clip.csv    # Event Log per i primi 18 secondi di gioco
+│       ├── event_log_full_first_half.csv # Event Log globale di 6.451 eventi (767 clip)
+│       ├── comparison_dataset_zero_shot_vs_domain_rules.csv # Dataset comparativo (767 clip)
+│       ├── benchmark_sample_50_clips_comparison.csv # Dataset di riferimento per il test su 50 clip
+│       └── benchmark_50_clips_live_dual_qwen.csv    # Risultati dell'inferenza neurale live su Qwen
 └── results/
-    ├── match_statistics.json           # Statistiche fisiche e tattiche estratte dall'intero match
-    ├── process_map_dfg.png             # Modello di processo Directly-Follows Graph scoperto
+    ├── match_statistics.json           # Statistiche descrittive e prestazionali del match
+    ├── process_map_dfg.png             # Directly-Follows Graph scoperto con PM4Py
     ├── pass_network_full_match.png     # Grafo orientato della rete dei passaggi tra calciatori
-    ├── activity_distribution_full_match.png # Istogramma della distribuzione delle attivita' astratte
-    ├── comparison_summary_metrics.json # Metriche quantitative di concordanza globale (767 clip)
-    ├── confusion_matrix_comparison.csv # Matrice di contingenza tra approccio visivo e regole
-    ├── latex_table_comparison.tex      # Tabella LaTeX della tassonomia errori su 767 clip
-    ├── benchmark_sample_50_metrics.json # Metriche aggregate del benchmark sui 50 eventi
-    ├── latex_table_50_clips_benchmark.tex # Tabella LaTeX comparativa dei 50 eventi stratificati
+    ├── activity_distribution_full_match.png # Distribuzione percentuale delle attivita'
+    ├── comparison_summary_metrics.json # Metriche di concordanza globale (767 clip)
+    ├── confusion_matrix_comparison.csv # Matrice di contingenza empirica (767 clip)
+    ├── latex_table_comparison.tex      # Tabella LaTeX della tassonomia discrepanze
+    ├── benchmark_sample_50_metrics.json # Metriche del benchmark su 50 clip
+    ├── latex_table_50_clips_benchmark.tex # Tabella LaTeX comparativa dei 50 eventi
     ├── benchmark_50_clips_live_dual_metrics.json # Metriche dell'esperimento neurale live con Qwen
-    └── latex_table_50_clips_live_dual_qwen.tex   # Tabella LaTeX dell'esperimento neurale live
+    └── latex_table_50_clips_live_dual_qwen.tex   # Tabella LaTeX con il confronto puntuale live
 ```
 
 ---
 
-## 4. Installazione e Replicabilita'
+## Contenuto dei File e delle Cartelle
 
-Il codice e' verificato su Python 3.10 e 3.11 su ambienti Windows, Linux e Google Colab.
+### 1. Codice Sorgente (`src/` e Root)
+- `run_experiments.py`: Interfaccia a riga di comando per riprodurre le varie fasi della pipeline.
+- `src/config.py`: Definisce le dimensioni standard del campo da gioco (105m x 68m), la risoluzione video panoramica (4450x2000 px) e le soglie di velocità e spostamento per la classificazione delle azioni.
+- `src/data_loader.py`: Funzioni di parsing per i file di tracciamento palla e per la telemetria ZXY a 20Hz (posizione x/y, velocità in km/h, accelerazione, identificativo giocatore).
+- `src/visual_prompting.py`: Genera i ritagli *Action ROI* intorno alla traiettoria del pallone e sovrappone gli indicatori *Set-of-Marks* (cerchio verde per il giocatore partente, polilinea arancione per la traiettoria, cerchio rosso per l'area di arrivo).
+- `src/domain_rules.py`: Insieme di funzioni che applicano vincoli cinematici e regole del gioco del calcio (IFAB) per validare o raffinare le ipotesi di azione (es. verifica della posizione rispetto al centrocampo, spostamento minimo/massimo della palla).
+- `src/multi_clip_engine.py`: Costruisce la traccia continua di eventi per le prime 6 clip della partita (18 secondi di gioco effettivo).
+- `src/full_match_engine.py`: Gestisce l'estrazione degli eventi per l'intero primo tempo di gara (767 clip), generando l'Event Log per il Process Mining e calcolando statistiche atletiche individuali.
+- `src/process_mining_analysis.py`: Interfaccia con la libreria scientifica PM4Py per generare grafi Directly-Follows Graph (DFG) e calcolare la Social Network Analysis (Handover of Work) sui passaggi tra compagni di squadra.
+- `src/benchmark_comparison.py`: Modulo per il confronto sistematico tra l'approccio puramente visivo (Zero-Shot) e quello con regole di dominio su tutte le 767 clip del match.
+- `src/benchmark_50_clips.py`: Gestisce il benchmark stratificato su 50 eventi rappresentativi e l'interrogazione reale del modello neurale *Qwen2.5-VL*.
 
-### Installazione Locale
+### 2. Dati (`data/`)
+- `action_rois/`: 50 immagini ritagliate in formato JPG con visual prompting applicato, relative a 50 momenti di gioco rappresentativi (calcio d'inizio, passaggi in avanti, retropassaggi, controlli palla, palle ferme, lanci lunghi, rinvii difensivi).
+- `ball_tracks/`: Tracciamento palla bidimensionale estratto frame per frame per le clip 0000, 0001, 0002, 0003, 0004, 0005.
+- `sensors/`: Campionamenti dei sensori ZXY a 20Hz sincronizzati per la clip 0000 e per i primi 18 secondi di gioco (clip 0000 - 0005).
+- `event_logs/`:
+  - `event_log_multi_clip.csv`: Event Log della sequenza di avvio gara (71 record multi-entità).
+  - `event_log_full_first_half.csv`: Event Log completo del primo tempo di gara contenente 6.451 eventi validati (767 eventi palla e 5.684 eventi individuali dei calciatori).
+  - `comparison_dataset_zero_shot_vs_domain_rules.csv`: Dataset di comparazione su tutte le 767 clip (predizione visiva vs classificazione con regole di dominio, tassonomia della discrepanza e impatto sul Process Mining).
+  - `benchmark_sample_50_clips_comparison.csv`: Dataset di confronto sui 50 eventi selezionati.
+  - `benchmark_50_clips_live_dual_qwen.csv`: Risultati delle 100 inferenze eseguite realmente dal modello Qwen2.5-VL (Pass A solo visivo vs Pass B con dati sensoriali e regole).
+
+### 3. Risultati e Modelli Generati (`results/`)
+- `process_map_dfg.png`: Modello di processo Directly-Follows Graph ricavato dagli eventi palla del primo tempo.
+- `pass_network_full_match.png`: Grafo orientato delle interazioni e transizioni di passaggio tra i calciatori in campo.
+- `activity_distribution_full_match.png`: Grafico a barre con la frequenza percentuale delle macro-attività estratte.
+- `match_statistics.json`: File JSON riassuntivo contenente indicatori prestazionali (distanze percorse in km, velocità massime, numero di sprint) e frequenze di transizione.
+- File di metriche JSON (`comparison_summary_metrics.json`, `benchmark_sample_50_metrics.json`, `benchmark_50_clips_live_dual_metrics.json`).
+- Tabelle in formato LaTeX (`latex_table_comparison.tex`, `latex_table_50_clips_benchmark.tex`, `latex_table_50_clips_live_dual_qwen.tex`) pronte per essere incluse in documenti accademici.
+
+---
+
+## Installazione e Requisiti
+
+Il codice richiede Python 3.10 o versioni successive.
 
 ```bash
-# 1. Clonazione del repository
+# 1. Clonazione della repository
 git clone https://github.com/<username>/thesis-multimodal-event-abstraction.git
 cd thesis-multimodal-event-abstraction
 
 # 2. Creazione dell'ambiente virtuale
 python -m venv venv
 
-# Attivazione ambiente su Windows PowerShell:
+# Attivazione su Windows PowerShell:
 .\venv\Scripts\Activate.ps1
 # Oppure su Linux/macOS:
 source venv/bin/activate
 
-# 3. Installazione delle dipendenze
+# 3. Installazione delle librerie
 pip install -r requirements.txt
 ```
 
-### Esecuzione Tramite Interfaccia a Riga di Comando (CLI)
+---
 
-Il comando `run_experiments.py` consente di riprodurre ciascuna fase sperimentale:
+## Esecuzione dei Test
+
+### 1. Da Riga di Comando (`run_experiments.py`)
+
+Lo script consente di eseguire i test per singoli stadi o nell'insieme:
 
 ```bash
-# Esecuzione completa di tutti gli stadi (1, 2, 3, 4, 5):
+# Esecuzione completa di tutti i test (Stadi 1, 2, 3, 4, 5):
 python run_experiments.py --stage all
 
-# Esecuzione mirata di un singolo stadio:
-python run_experiments.py --stage 1    # Stadio 1: Validazione singola clip (Kickoff, clip 0000)
-python run_experiments.py --stage 2    # Stadio 2: Sequenza multi-clip (0000 - 0005, 18 secondi)
-python run_experiments.py --stage 3    # Stadio 3: Process Mining su 6.451 eventi (Full Match)
-python run_experiments.py --stage 4    # Stadio 4: Benchmark globale e matrice comparativa (767 clip)
-python run_experiments.py --stage 5    # Stadio 5: Benchmark sperimentale su 50 eventi stratificati
+# Esecuzione di uno specifico stadio:
+python run_experiments.py --stage 1    # Singola clip (Clip 0000 - Calcio d'inizio)
+python run_experiments.py --stage 2    # Sequenza multi-clip (0000 - 0005, 18 secondi)
+python run_experiments.py --stage 3    # Process Mining su scala globale (6.451 eventi full match)
+python run_experiments.py --stage 4    # Dataset comparativo globale su 767 clip
+python run_experiments.py --stage 5    # Benchmark sperimentale su 50 clip
 ```
 
-Per eseguire l'inferenza neurale *live* sul modello Qwen2.5-VL-3B-Instruct sfruttando la GPU locale (se presente):
+Se si dispone di una GPU locale e delle librerie `transformers` e `torch`, e' possibile eseguire l'inferenza reale del modello Qwen sulle Action ROI:
 ```bash
 python run_experiments.py --stage 5 --live-vlm
 ```
 
-### Esecuzione Interattiva su Google Colab
+### 2. Tramite Google Colab (`notebooks/pipeline_experimentation.ipynb`)
 
-Il notebook `notebooks/pipeline_experimentation.ipynb` e' concepito per la massima fruibilita' accademica:
-- Include una modalita' **Dual-Mode**: se eseguito su CPU standard (es. quota gratuita GPU esaurita su Colab), completa l'intera pipeline di Process Mining, l'Event Abstraction e i benchmark in circa 3 secondi utilizzando i responsi certificati del modello.
-- Se eseguito su GPU T4, istanzia realmente i pesi di `Qwen/Qwen2.5-VL-3B-Instruct` in precisione float16 / 4-bit ed esegue l'inferenza visiva e multimodale in tempo reale.
-
----
-
-## 5. Sintesi dei Test Condotti e Risultati Sperimentali
-
-La sperimentazione ha seguito una progressione metodologica rigorosa, articolata in cinque stadi scientifici:
-
-### Stadio 1: Validazione su Clip Singola (Clip 0000 - Calcio d'Inizio)
-- **Obiettivo:** Verificare se il solo prompt visivo sia sufficiente a catturare la natura regolamentare dell'avvio partita.
-- **Esito VLM (Test A):** Qwen2.5-VL riconosce l'azione macroscopica come *Kickoff_and_Pass*.
-- **Validazione Neuro-Simbolica (Test B):** Le regole di dominio verificano che la posizione iniziale del calciatore (Player 5) sia a $4.49\text{ m}$ dal dischetto di centrocampo (entro il cerchio di centrocampo di raggio regolamentare $9.15\text{ m}$) e che lo spostamento palla sia significativo ($\Delta = 459.7\text{ px}$). L'evento viene formalmente confermato (`CONFIRMED_BY_KINEMATICS`).
-
-### Stadio 2: Sequenza Multi-Clip Continua (Clip 0000 - 0005, 18 Secondi di Gioco)
-- **Obiettivo:** Dimostrare la capacita' di estrarre una catena causale ininterrotta di possesso palla per il Process Mining.
-- **Risultato:** La pipeline ricostruisce la traiettoria tattica completa:
-  $$\text{Kickoff\_and\_Pass (P5)} \longrightarrow \text{Ball\_Control\_and\_Carry (P12)} \longrightarrow \text{Ball\_Control\_and\_Carry (P11)} \longrightarrow \text{Ball\_Control\_and\_Carry (P2)} \longrightarrow \text{Long\_Forward\_Pass (P4)} \longrightarrow \text{Backward\_Pass (P14)}$$
-- **Integrazione sensoriale:** La telemetria ZXY rileva contestualmente l'accelerazione del ricevitore (Player 4) che raggiunge la velocita' di picco di $27.2\text{ km/h}$.
-
-### Stadio 3: Process Mining su Scala Globale (Intero Primo Tempo, 767 Clip)
-- **Volume dati originario:** Oltre 6.5 GB di video panoramico non compresso e 493.663 campionamenti telemetrici (38.35 minuti di gioco).
-- **Event Log sintetizzato:** Un file XES da 824 KB contenente **6.451 eventi validati** (767 eventi della palla, 5.684 eventi individuali dei calciatori attivi), con un abbattimento volumetrico superiore al **99.98%**.
-- **Distribuzione delle attivita' della palla:**
-  - *Ball_Control_and_Carry:* 239 eventi (31.2%)
-  - *Stationary_Play:* 158 eventi (20.6%)
-  - *Forward_Pass:* 152 eventi (19.8%)
-  - *Backward_Pass:* 131 eventi (17.1%)
-  - *Clearance_or_Long_Back_Pass:* 39 eventi (5.1%)
-  - *Long_Forward_Pass:* 39 eventi (5.1%)
-  - *Lateral_Pass:* 8 eventi (1.0%)
-  - *Kickoff_and_Pass:* 1 evento (0.1%)
-- **Process Discovery (PM4Py):** Generazione del Directly-Follows Graph (DFG) con 46 transizioni dirette identificate.
-- **Social Network Analysis (Handover of Work):** Mappatura della rete di passaggio tra i calciatori, individuando Player 11 (116 sprint, $v_{\max} = 34.8\text{ km/h}$) e Player 12 ($v_{\max} = 38.3\text{ km/h}$) come i nodi centrali della manovra.
-
-### Stadio 4: Benchmark Globale su 767 Clip (Zero-Shot vs Domain Rules)
-Il confronto sistematico tra l'approccio puramente visivo (Zero-Shot VLM) e l'approccio ibrido neuro-simbolico evidenzia:
-- **Tasso di Concordanza Globale (Agreement Rate):** $63.75\%$ (489 clip concordanti).
-- **Tasso di Discrepanza Risolto:** $36.25\%$ (278 clip corrette dalle regole di dominio).
-- **Tassonomia delle anomalie visive neutralizzate:**
-  - *Allucinazione di Movimento su Gioco Stazionario (`STATIONARY_HALLUCINATION`):* 109 clip ($14.21\%$). Il VLM scambia la corsa del giocatore vicino alla palla per un passaggio, mentre la telemetria certifica $\Delta \text{ball} < 50\text{ px}$.
-  - *Inversione Direzionale Prospettica (`DIRECTIONAL_INVERSION`):* 68 clip ($8.87\%$). Il VLM interpreta retropassaggi difensivi verso la propria porta come passaggi in avanti per via dell'orientamento corporeo prospettico dei compagni.
-  - *Ambiguita' Controllo/Passaggio (`CONTROL_PASS_AMBIGUITY`):* 44 clip ($5.74\%$).
-  - *Ambiguita' Passaggio/Controllo (`PASS_CONTROL_AMBIGUITY`):* 29 clip ($3.78\%$).
-  - *Inversione Tattica Rinvio/Lancio (`TACTICAL_INVERSION`):* 19 clip ($2.48\%$).
-  - *Ambiguita' Laterale (`LATERAL_AMBIGUITY`):* 8 clip ($1.04\%$).
-  - *Omissione Regolamentare (`REGULATORY_OMISSION`):* 1 clip ($0.13\%$).
-- **Impatto sul Process Mining:** Eliminazione di 109 cicli fittizi (*false loops*) nel modello DFG, rettifica di 87 transizioni invertite di flusso e corretta granularita' per 81 attivita'.
-
-### Stadio 5: Benchmark Sperimentale su 50 Eventi e Valutazione Neurale Live con Qwen2.5-VL
-Per convalidare scientificamente il comportamento del modello neurale, e' stato allestito un benchmark controllato su un campione stratificato di 50 eventi tattici critici (1 calcio d'inizio, 10 retropassaggi difensivi, 10 passaggi in avanti, 10 controlli orientati, 10 palle ferme con atleti in corsa a oltre 12 km/h, 5 lanci lunghi, 4 rinvii difensivi).
-
-L'esperimento e' stato condotto realmente su Google Colab con accelerazione GPU NVIDIA Tesla T4, sottoponendo Qwen2.5-VL a **100 passaggi di inferenza** (2 inferenze indipendenti per ciascuna delle 50 clip):
-1. **Passaggio A - Zero-Shot Visivo Puro (Senza Knowledge Base):**
-   - Fornendo al modello la sola Action ROI ritagliata con Set-of-Marks, il modello neurale collassa su una predizione monocorde: predice `Forward_Pass` in **44 clip su 50 (88.0%)**.
-   - *Spiegazione scientifica:* Il VLM e' affetto da un forte bias induttivo visivo. La presenza del vettore tracciato sulla ROI induce la rete ad allucinare un passaggio in avanti perfino su palle completamente ferme ($\Delta = 0.0\text{ px}$) o su retropassaggi verso la propria porta ($\Delta x = -506\text{ px}$).
-2. **Passaggio B - In-Context Prompting con Knowledge Base e Telemetria 20Hz:**
-   - Iniettando nel prompt i dati dei sensori (dislocazione della palla in pixel, spostamento longitudinale $\Delta x$, velocita' dell'attore in km/h) unitamente alle regole formali di classificazione cinematica, il comportamento del modello muta sensibilmente:
-   - Su **21 clip su 50 (42.0%)**, la conoscenza di dominio convince il VLM ad abbandonare la predizione allucinata `Forward_Pass`, riconoscendo correttamente controlli orientati e conduzioni palla.
-3. **Conclusioni Scientifiche per la Tesi (La Necessita' del Paradigma Neuro-Simbolico):**
-   - L'arricchimento del prompt con regole di dominio (*Soft In-Context Prompting*) migliora sensibilmente la consapevolezza del modello neurale, rettificando il 42% delle allucinazioni.
-   - Tuttavia, poiche' i modelli linguistici/multimodali sono predittori statistici di token e non motori aritmetici rigidi, essi falliscono nel verificare con costanza disuguaglianze numeriche complesse (es. $-506 < -100$).
-   - Di conseguenza, l'integrazione di un **motore di regole neuro-simbolico deterministico ed esterno** (come quello proposto in questa tesi) si rivela **strettamente necessaria e insostituibile** per garantire un Event Log corretto al 100%, privo di rumore semantico e pienamente conforme agli standard del Process Mining.
+Il notebook `pipeline_experimentation.ipynb` permette di eseguire l'intera pipeline in ambiente interattivo:
+- **Modalità CPU:** Se non è disponibile una GPU, esegue istantaneamente tutti i test, l'applicazione delle regole di dominio, la scoperta di processo con PM4Py e l'analisi dei benchmark utilizzando i responsi certificati del modello.
+- **Modalità GPU (T4):** Permette di caricare realmente il modello multimodale `Qwen/Qwen2.5-VL-3B-Instruct` e svolgere le inferenze visive e multimodali dal vivo.
+- Include una cella finale di esportazione che raggruppa tutti i risultati in un unico archivio `.zip` scaricabile.
 
 ---
 
-## 6. Documenti e Tabelle Accademiche Generate
+## Descrizione dei Test Inclusi
 
-Tutti i risultati numerici e i modelli grafici sono disponibili nella cartella `results/` e pronti per l'inclusione nella stesura della tesi:
-- `results/latex_table_50_clips_live_dual_qwen.tex`: Tabella formale in LaTeX con il confronto puntuale tra Zero-Shot e Con Knowledge Base per tutte le 50 clip.
-- `results/latex_table_comparison.tex`: Tabella riassuntiva della tassonomia delle discrepanze sul dataset globale di 767 clip.
-- `results/process_map_dfg.png`: Rappresentazione grafica del Directly-Follows Graph per il primo tempo di gioco.
-- `results/pass_network_full_match.png`: Grafo orientato della Social Network Analysis dei passaggi.
-- `results/activity_distribution_full_match.png`: Grafico della distribuzione delle macro-attivita' di gara.
-
----
-
-## 7. Riferimenti Bibliografici
-
-1. **van der Aalst, W. M. P.** (2016). *Process Mining: Data Science in Action*. Springer.
-2. **Pettersen, S. A., Johansen, D., Johansen, H., Berg-Johansen, V., Gaddam, V. R., Mortensen, A., Langseth, R., Griwodz, C., Stensland, H. K., & Halvorsen, P.** (2014). *Alfheim: An open multi-sensor dataset from professional soccer matches*. Proceedings of the 5th ACM Multimedia Systems Conference (MMSys '14), pp. 200–205.
-3. **Ferrara, A., et al.** (2024). *AA-STAL: Spatial-Temporal Action Localization with Visual Prompting and Set-of-Marks*. Computer Vision and Pattern Recognition.
-4. **Qwen Team** (2025). *Qwen2.5-VL: Enhancing Vision-Language Capabilities for Dynamic and High-Resolution Multimodal Understanding*. arXiv preprint.
-5. **Berti, A., et al.** (2019). *Process Mining for Python (PM4Py): An open-source library for process analysis*. CEUR Workshop Proceedings.
+1. **Stage 1 - Test su Singola Clip (Clip 0000):** Verifica della prima azione di gioco (calcio d'inizio), confrontando la predizione visiva con la verifica di posizione dell'attore rispetto al centro del campo e lo spostamento della palla.
+2. **Stage 2 - Sequenza Continua Multi-Clip (Clip 0000 - 0005):** Elaborazione sequenziale dei primi 18 secondi di gioco per verificare la concatenazione temporale delle attività di possesso palla e dei dati fisici dei calciatori.
+3. **Stage 3 - Process Mining su Scala Globale (Intero Primo Tempo):** Elaborazione delle 767 clip del primo tempo di gara (circa 38.4 minuti effettivi), generazione dell'Event Log di 6.451 eventi e scoperta del modello di processo Directly-Follows Graph tramite PM4Py.
+4. **Stage 4 - Benchmark Globale su 767 Clip:** Confronto tra classificazione puramente visiva e classificazione mediata da regole di dominio, con calcolo del tasso di concordanza globale e censimento delle discrepanze (inversioni direzionali, allucinazioni di movimento su palla ferma, ecc.).
+5. **Stage 5 - Benchmark su 50 Eventi e Test Neurale Live (Qwen2.5-VL):** Test di classificazione condotto su un campione stratificato di 50 clip rappresentative in due modalità:
+   - *Passaggio A (Zero-Shot Visivo):* Solo immagine Action ROI con annotazione grafica.
+   - *Passaggio B (Multimodale con Regole):* Immagine arricchita con telemetria numerica a 20Hz e vincoli di dominio.
