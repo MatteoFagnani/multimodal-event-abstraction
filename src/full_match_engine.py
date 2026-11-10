@@ -75,6 +75,8 @@ def extract_match_analytics(event_log_df: pd.DataFrame, results_dir: Optional[st
                                 'sprint_count': p.get("Sprint_Count (>18km/h)", 0),
                                 'passes_initiated': p.get("Passes_Initiated", 0)
                             }
+                elif "player_performance" in cached_stats:
+                    player_stats = cached_stats["player_performance"]
             except Exception:
                 pass
 
@@ -90,13 +92,32 @@ def extract_match_analytics(event_log_df: pd.DataFrame, results_dir: Optional[st
                 'passes_initiated': 0
             }
         
-    clip_count = event_log_df['clip_id'].nunique() if 'clip_id' in event_log_df.columns else 767
+    clip_count = int(event_log_df['clip_id'].nunique() if 'clip_id' in event_log_df.columns else 767)
+    duration_min = round(clip_count * 3.0 / 60.0, 2)
+    
+    player_stats_list = []
+    for pid, pdata in sorted(player_stats.items()):
+        player_stats_list.append({
+            "Player": pid,
+            "Distance_Covered_km": pdata.get('total_displacement_km', 0.0),
+            "Max_Speed_kmh": pdata.get('max_speed_kmh', 0.0),
+            "Sprint_Count (>18km/h)": pdata.get('sprint_count', 0),
+            "Passes_Initiated": pdata.get('passes_initiated', 0)
+        })
+        
+    pass_transitions = {}
+    if 'cached_stats' in locals() and 'pass_transitions' in cached_stats:
+        pass_transitions = cached_stats['pass_transitions']
     
     return {
+        'total_clips': clip_count,
+        'unique_clips': clip_count,
+        'duration_minutes': duration_min,
         'total_events': int(len(event_log_df)),
         'ball_action_events': int(len(ball_events)),
         'player_kinematic_events': int(len(player_events)),
-        'unique_clips': int(clip_count),
         'ball_activity_distribution': activity_counts,
-        'player_performance': player_stats
+        'player_stats': player_stats_list,
+        'player_performance': player_stats,
+        'pass_transitions': pass_transitions
     }
