@@ -1,0 +1,37 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Confronto puntuale tra approccio Senza Knowledge Base (Zero-Shot) e Con Knowledge Base sul campione stratificato di 25 eventi.}
+\label{tab:stratified_benchmark_25}
+\begin{tabular}{cclllc}
+\hline
+\textbf{Clip} & \textbf{Attore} & \textbf{Spost. Palla} & \textbf{Senza KB (Zero-Shot)} & \textbf{Con KB (Neuro-Simbolico)} & \textbf{Esito} \\
+\hline
+0000 & Player_5 & 460px (dx=452) & Forward\_Pass & Kickoff\_and\_Pass & \textbf{CORRETTO} \\
+0005 & Player_14 & 536px (dx=-506) & Forward\_Pass & Backward\_Pass & \textbf{CORRETTO} \\
+0135 & Player_8 & 261px (dx=-230) & Forward\_Pass & Backward\_Pass & \textbf{CORRETTO} \\
+0272 & Player_5 & 294px (dx=-264) & Forward\_Pass & Backward\_Pass & \textbf{CORRETTO} \\
+0425 & Player_8 & 427px (dx=-426) & Forward\_Pass & Backward\_Pass & \textbf{CORRETTO} \\
+0579 & Player_1 & 792px (dx=-710) & Forward\_Pass & Backward\_Pass & \textbf{CORRETTO} \\
+0010 & Player_5 & 736px (dx=710) & Forward\_Pass & Forward\_Pass & MATCH \\
+0125 & Player_5 & 727px (dx=522) & Forward\_Pass & Forward\_Pass & MATCH \\
+0307 & Player_12 & 502px (dx=502) & Forward\_Pass & Forward\_Pass & MATCH \\
+0456 & Player_14 & 297px (dx=280) & Forward\_Pass & Forward\_Pass & MATCH \\
+0585 & Player_12 & 494px (dx=424) & Forward\_Pass & Forward\_Pass & MATCH \\
+0001 & Player_12 & 162px (dx=160) & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & MATCH \\
+0133 & Player_5 & 248px (dx=230) & Forward\_Pass & Ball\_Control\_and\_Carry & \textbf{CORRETTO} \\
+0290 & Player_1 & 65px (dx=64) & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & MATCH \\
+0418 & Player_12 & 203px (dx=202) & Forward\_Pass & Ball\_Control\_and\_Carry & \textbf{CORRETTO} \\
+0565 & Player_12 & 137px (dx=-96) & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & MATCH \\
+0017 & Player_5 & 15px (dx=-4) & Forward\_Pass & Stationary\_Play & \textbf{CORRETTO} \\
+0181 & Player_11 & 14px (dx=10) & Forward\_Pass & Stationary\_Play & \textbf{CORRETTO} \\
+0285 & Player_1 & 28px (dx=-20) & Forward\_Pass & Stationary\_Play & \textbf{CORRETTO} \\
+0471 & Player_12 & 0px (dx=0) & Forward\_Pass & Stationary\_Play & \textbf{CORRETTO} \\
+0635 & Player_4 & 2px (dx=-2) & Forward\_Pass & Stationary\_Play & \textbf{CORRETTO} \\
+0004 & Player_4 & 1249px (dx=1200) & Long\_Forward\_Pass & Long\_Forward\_Pass & MATCH \\
+0251 & Player_11 & 1556px (dx=1534) & Long\_Forward\_Pass & Long\_Forward\_Pass & MATCH \\
+0006 & Player_1 & 970px (dx=-970) & Long\_Forward\_Pass & Clearance\_or\_Long\_Back\_Pass & \textbf{CORRETTO} \\
+0300 & Player_6 & 874px (dx=-866) & Long\_Forward\_Pass & Clearance\_or\_Long\_Back\_Pass & \textbf{CORRETTO} \\
+\hline
+\end{tabular}
+\end{table}

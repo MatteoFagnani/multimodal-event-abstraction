@@ -1,0 +1,23 @@
+{
+    "total_sample_clips": 25,
+    "concordant_clips": 10,
+    "discordant_clips": 15,
+    "agreement_rate_pct": 40.0,
+    "discrepancy_breakdown": {
+        "NONE_CONCORDANT": 10,
+        "DIRECTIONAL_INVERSION": 5,
+        "STATIONARY_HALLUCINATION": 5,
+        "CONTROL_PASS_AMBIGUITY": 2,
+        "TACTICAL_INVERSION": 2,
+        "REGULATORY_OMISSION": 1
+    },
+    "tested_categories": {
+        "Kickoff": 1,
+        "Backward_Pass": 5,
+        "Forward_Pass": 5,
+        "Ball_Control": 5,
+        "Stationary_Play": 5,
+        "Long_Pass": 2,
+        "Clearance": 2
+    }
+}
