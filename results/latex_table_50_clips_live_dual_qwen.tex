@@ -1,0 +1,62 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{cllccc}
+\hline
+\textbf{Clip} & \textbf{Categoria} & \textbf{Ground Truth} & \textbf{Qwen Zero-Shot} & \textbf{Qwen Con KB} & \textbf{Effetto KB} \\
+\hline
+0000 & Kickoff & Kickoff\_and\_Pass & Unknown & Forward\_Pass & MODIFICATO \\
+0005 & Backward\_Pass & Backward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0050 & Backward\_Pass & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & Unknown & MODIFICATO \\
+0100 & Backward\_Pass & Ball\_Control\_and\_Carry & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0135 & Backward\_Pass & Backward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0200 & Backward\_Pass & Stationary\_Play & Ball\_Control\_and\_Carry & Kickoff\_and\_Pass & MODIFICATO \\
+0272 & Backward\_Pass & Backward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0350 & Backward\_Pass & Forward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0425 & Backward\_Pass & Backward\_Pass & Unknown & Forward\_Pass & MODIFICATO \\
+0500 & Backward\_Pass & Ball\_Control\_and\_Carry & Forward\_Pass & Ball\_Control\_and\_Carry & \textbf{CORRETTO} \\
+0579 & Backward\_Pass & Backward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0010 & Forward\_Pass & Forward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0080 & Forward\_Pass & Backward\_Pass & Forward\_Pass & Ball\_Control\_and\_Carry & MODIFICATO \\
+0125 & Forward\_Pass & Forward\_Pass & Unknown & Forward\_Pass & \textbf{CORRETTO} \\
+0150 & Forward\_Pass & Clearance\_or\_Long\_Back\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0230 & Forward\_Pass & Ball\_Control\_and\_Carry & Unknown & Ball\_Control\_and\_Carry & \textbf{CORRETTO} \\
+0307 & Forward\_Pass & Forward\_Pass & Unknown & Forward\_Pass & \textbf{CORRETTO} \\
+0380 & Forward\_Pass & Stationary\_Play & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & CONCORDANTE \\
+0456 & Forward\_Pass & Forward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0585 & Forward\_Pass & Forward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0620 & Forward\_Pass & Forward\_Pass & Unknown & Unknown & CONCORDANTE \\
+0001 & Ball\_Control & Ball\_Control\_and\_Carry & Forward\_Pass & Kickoff\_and\_Pass & MODIFICATO \\
+0002 & Ball\_Control & Ball\_Control\_and\_Carry & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0003 & Ball\_Control & Ball\_Control\_and\_Carry & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0070 & Ball\_Control & Ball\_Control\_and\_Carry & Forward\_Pass & Ball\_Control\_and\_Carry & \textbf{CORRETTO} \\
+0133 & Ball\_Control & Ball\_Control\_and\_Carry & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0210 & Ball\_Control & Stationary\_Play & Forward\_Pass & Unknown & MODIFICATO \\
+0290 & Ball\_Control & Ball\_Control\_and\_Carry & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0340 & Ball\_Control & Backward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0418 & Ball\_Control & Ball\_Control\_and\_Carry & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0565 & Ball\_Control & Ball\_Control\_and\_Carry & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0017 & Stationary\_Play & Stationary\_Play & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0040 & Stationary\_Play & Forward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0110 & Stationary\_Play & Ball\_Control\_and\_Carry & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0181 & Stationary\_Play & Stationary\_Play & Forward\_Pass & Unknown & MODIFICATO \\
+0260 & Stationary\_Play & Backward\_Pass & Forward\_Pass & Ball\_Control\_and\_Carry & MODIFICATO \\
+0285 & Stationary\_Play & Stationary\_Play & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0390 & Stationary\_Play & Forward\_Pass & Forward\_Pass & Ball\_Control\_and\_Carry & MODIFICATO \\
+0471 & Stationary\_Play & Stationary\_Play & Forward\_Pass & Ball\_Control\_and\_Carry & MODIFICATO \\
+0520 & Stationary\_Play & Ball\_Control\_and\_Carry & Forward\_Pass & Ball\_Control\_and\_Carry & \textbf{CORRETTO} \\
+0635 & Stationary\_Play & Stationary\_Play & Unknown & Ball\_Control\_and\_Carry & MODIFICATO \\
+0004 & Long\_Pass & Long\_Forward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0095 & Long\_Pass & Ball\_Control\_and\_Carry & Forward\_Pass & Ball\_Control\_and\_Carry & \textbf{CORRETTO} \\
+0251 & Long\_Pass & Long\_Forward\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0315 & Long\_Pass & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & Ball\_Control\_and\_Carry & CONCORDANTE \\
+0480 & Long\_Pass & Clearance\_or\_Long\_Back\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0006 & Clearance & Clearance\_or\_Long\_Back\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0165 & Clearance & Clearance\_or\_Long\_Back\_Pass & Forward\_Pass & Forward\_Pass & CONCORDANTE \\
+0300 & Clearance & Clearance\_or\_Long\_Back\_Pass & Forward\_Pass & Kickoff\_and\_Pass & MODIFICATO \\
+0440 & Clearance & Stationary\_Play & Forward\_Pass & Ball\_Control\_and\_Carry & MODIFICATO \\
+\hline
+\end{tabular}
+\caption{Benchmark sperimentale reale eseguito con Qwen2.5-VL su GPU (Colab, 170.3s): Confronto duale Zero-Shot vs In-Context Domain Knowledge Prompting su 50 eventi.}
+\label{tab:qwen_dual_live_50_clips}
+\end{table*}

@@ -1,0 +1,10 @@
+{
+    "total_evaluated_clips": 50,
+    "execution_environment": "Google Colab GPU T4 (170.3 seconds)",
+    "model": "Qwen/Qwen2.5-VL-3B-Instruct (4-bit BitsAndBytes)",
+    "clips_rectified_by_domain_knowledge": 21,
+    "percentage_rectified_by_kb": 42.0,
+    "with_kb_accuracy_pct": 26.0,
+    "zero_shot_dominant_class": "Forward_Pass (44/50 = 88.0%)",
+    "zero_shot_accuracy_pct": 16.0
+}
