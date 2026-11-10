@@ -1,0 +1,23 @@
+{
+    "total_evaluated_clips": 767,
+    "concordant_clips": 489,
+    "discordant_clips": 278,
+    "overall_agreement_rate_pct": 63.75,
+    "discrepancy_taxonomy": {
+        "NONE_CONCORDANT": 489,
+        "STATIONARY_HALLUCINATION": 109,
+        "DIRECTIONAL_INVERSION": 68,
+        "CONTROL_PASS_AMBIGUITY": 44,
+        "PASS_CONTROL_AMBIGUITY": 29,
+        "TACTICAL_INVERSION": 19,
+        "LATERAL_AMBIGUITY": 8,
+        "REGULATORY_OMISSION": 1
+    },
+    "process_mining_impact_distribution": {
+        "Consistent_Process_Transition": 489,
+        "Avoided_False_Activity_Loop": 109,
+        "Corrected_Process_Flow_Direction": 87,
+        "Refined_Activity_Granularity": 81,
+        "Identified_Official_Process_Start": 1
+    }
+}

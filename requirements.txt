@@ -1,4 +1,3 @@
-# Dipendenze della pipeline scientifica di Tesi
 # Python >= 3.10 consigliato
 
 numpy>=1.24.0

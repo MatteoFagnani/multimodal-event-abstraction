@@ -1,13 +1,5 @@
 # Event Abstraction con Domain Knowledge per il Process Mining su Flussi Multimodali nel Calcio Professionistico
 
-**Tesi di Laurea Triennale in Informatica**  
-**Candidato:** Matteo Fagnani  
-**Relatrice:** Prof.ssa Barbara Re  
-**Istituzione:** Universita' di Camerino (UNICAM) - Scuola di Scienze e Tecnologie, Sezione di Informatica  
-**Anno Accademico:** 2025/2026  
-
----
-
 ## 1. Abstract e Motivazione Scientifica
 
 L'applicazione del Process Mining in contesti sportivi complessi, quale il calcio professionistico, e' tradizionalmente ostacolata dal divario di astrazione (*abstraction gap*) tra i dati sensoriali a basso livello (telemetria corporea, tracciamento posizionale, flussi video continui) e gli eventi discreti ad alto livello semantico necessari per l'analisi dei processi (passaggi, pressing, riposizionamenti tattici, conclusioni a rete).
