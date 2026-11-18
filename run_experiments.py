@@ -4,6 +4,7 @@ Stage 1: Validazione singola clip (Clip 0000) - Test A (VLM) vs Test B (Domain R
 Stage 2: Estrazione sequenziale multi-clip (0000 - 0005) e scoperta del processo
 Stage 3: Process Mining su scala globale (Intero primo tempo, 6.451 eventi)
 Stage 4: Benchmark e Dataset di Comparazione Zero-Shot vs Domain Rules (767 clip)
+Stage 5: Benchmark Sperimentale su 50 Eventi e Inferenza Live con Qwen2.5-VL
 
 Uso da riga di comando:
     python run_experiments.py --stage all
@@ -11,6 +12,8 @@ Uso da riga di comando:
     python run_experiments.py --stage 2
     python run_experiments.py --stage 3
     python run_experiments.py --stage 4
+    python run_experiments.py --stage 5
+    python run_experiments.py --stage 5 --live-vlm
 """
 
 import os

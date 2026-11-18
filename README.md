@@ -94,8 +94,8 @@ Il codice richiede Python 3.10 o versioni successive.
 
 ```bash
 # 1. Clonazione della repository
-git clone https://github.com/<username>/thesis-multimodal-event-abstraction.git
-cd thesis-multimodal-event-abstraction
+git clone https://github.com/MatteoFagnani/multimodal-event-abstraction.git
+cd multimodal-event-abstraction
 
 # 2. Creazione dell'ambiente virtuale
 python -m venv venv
